@@ -1,3 +1,5 @@
+# TODO: i'm weary of the Tempfile override
+
 module Paperclip
   # Handles thumbnailing images that are uploaded.
   class Thumbnail

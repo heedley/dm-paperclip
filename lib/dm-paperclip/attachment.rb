@@ -1,3 +1,13 @@
+# TODO: user RDoc format for comments
+#       wrap function call with parenthesis
+#       create methods to manage interpolations
+#       allow the use of object instance methods or properties as interpolations
+#       add better mime type checking on *nix systems, absorb mimetype-fu into upfile
+#       Tempfile and File can be used for mime checks
+#       better documentation for use with files that are not images
+#       organize the methods better
+#       remove unneeded methods
+
 module Paperclip
   # The Attachment class manages the files for a given attachment. It saves when the model saves,
   # deletes when the model is destroyed, and processes the file upon assignment.

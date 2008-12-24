@@ -1,3 +1,5 @@
+# TODO: pull down new changes from paperclip itself
+
 # Paperclip allows file attachments that are stored in the filesystem. All graphical
 # transformations are done using the Graphics/ImageMagick command line utilities and
 # are stored in Tempfiles until the record is saved. Paperclip does not require a
@@ -5,6 +7,7 @@
 # columns to your table.
 #
 # Author:: Jon Yurek
+# Contributors :: Michael D'Auria
 # Copyright:: Copyright (c) 2008 thoughtbot, inc.
 # License:: MIT License (http://www.opensource.org/licenses/mit-license.php)
 #
@@ -26,18 +29,17 @@
 # See the +has_attached_file+ documentation for more details.
 
 require 'tempfile'
-require File.join(File.dirname(__FILE__), 'dm-paperclip', 'upfile')
-require File.join(File.dirname(__FILE__), 'dm-paperclip', 'iostream')
-require File.join(File.dirname(__FILE__), 'dm-paperclip', 'geometry')
-require File.join(File.dirname(__FILE__), 'dm-paperclip', 'thumbnail')
-require File.join(File.dirname(__FILE__), 'dm-paperclip', 'storage')
-require File.join(File.dirname(__FILE__), 'dm-paperclip', 'attachment')
+require 'dm-paperclip/upfile'
+require 'dm-paperclip/iostream'
+require 'dm-paperclip/geometry'
+require 'dm-paperclip/thumbnail'
+require 'dm-paperclip/storage'
+require 'dm-paperclip/attachment'
 
 # Only include validations if dm-validations is loaded
-require File.join(File.dirname(__FILE__), 'dm-paperclip', 'validations') unless defined?(DataMapper::Validate).nil?
+require 'dm-paperclip/validations' unless defined?(DataMapper::Validate).nil?
 
 module Paperclip
-  VERSION = "2.1.4"
   class << self
     # Provides configurability to Paperclip. There are a number of options available, such as:
     # * whiny_thumbnails: Will raise an error if Paperclip cannot process thumbnails of 

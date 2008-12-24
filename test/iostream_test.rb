@@ -1,10 +1,4 @@
-require 'rubygems'
-require 'test/unit'
-require 'stringio'
-require 'tempfile'
-require 'shoulda'
-
-require File.join(File.dirname(__FILE__), '..', 'lib', 'dm-paperclip', 'iostream.rb')
+require 'test/helper.rb'
 
 class IOStreamTest < Test::Unit::TestCase
   context "IOStream" do

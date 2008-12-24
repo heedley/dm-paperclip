@@ -220,7 +220,7 @@ class AttachmentTest < Test::Unit::TestCase
 
     should "raise if there are not the correct columns when you try to assign" do
       @other_attachment = Paperclip::Attachment.new(:not_here, @instance)
-      assert_raises(Paperclip::PaperclipError) do
+      assert_raises(ArgumentError) do
         @other_attachment.assign(@file)
       end
     end

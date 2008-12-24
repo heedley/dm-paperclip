@@ -1,3 +1,5 @@
+# TODO: ContentTypeValidator should check the :tempfile for it's content type on *nix systems
+
 module Paperclip
   module Validate
 
