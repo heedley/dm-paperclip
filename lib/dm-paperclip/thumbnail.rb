@@ -12,7 +12,7 @@ module Paperclip
     # unless specified. Thumbnail creation will raise no errors unless
     # +whiny_thumbnails+ is true (which it is, by default. If +convert_options+ is
     # set, the options will be appended to the convert command upon image conversion 
-    def initialize file, target_geometry, format = nil, convert_options = nil, whiny_thumbnails = true
+    def initialize(file, target_geometry, format = nil, convert_options = nil, whiny_thumbnails = true)
       @file             = file
       @crop             = target_geometry[-1,1] == '#'
       @target_geometry  = Geometry.parse target_geometry
@@ -28,7 +28,7 @@ module Paperclip
 
     # Creates a thumbnail, as specified in +initialize+, +make+s it, and returns the
     # resulting Tempfile.
-    def self.make file, dimensions, format = nil, convert_options = nil, whiny_thumbnails = true
+    def self.make(file, dimensions, format = nil, convert_options = nil, whiny_thumbnails = true)
       new(file, dimensions, format, convert_options, whiny_thumbnails).make
     end
 

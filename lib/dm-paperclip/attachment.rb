@@ -1,5 +1,4 @@
 # TODO: user RDoc format for comments
-#       wrap function call with parenthesis
 #       create methods to manage interpolations
 #       allow the use of object instance methods or properties as interpolations
 #       add better mime type checking on *nix systems, absorb mimetype-fu into upfile
@@ -30,7 +29,7 @@ module Paperclip
     # Creates an Attachment object. +name+ is the name of the attachment, +instance+ is the
     # ActiveRecord object instance it's attached to, and +options+ is the same as the hash
     # passed to +has_attached_file+.
-    def initialize name, instance, options = {}
+    def initialize(name, instance, options = {})
       @name              = name
       @instance          = instance
 
@@ -63,7 +62,7 @@ module Paperclip
     # the previous file for deletion, to be flushed away on #save of its host.
     # In addition to form uploads, you can also assign another Paperclip attachment:
     #   new_user.avatar = old_user.avatar
-    def assign uploaded_file
+    def assign(uploaded_file)
       if uploaded_file.is_a?(Paperclip::Attachment)
         uploaded_file = uploaded_file.to_file(:original)
       end
@@ -116,7 +115,7 @@ module Paperclip
     # and can point to an action in your app, if you need fine grained security.
     # This is not recommended if you don't need the security, however, for
     # performance reasons.
-    def url style = default_style
+    def url(style = default_style)
       url = original_filename.nil? ? interpolate(@default_url, style) : interpolate(@url, style)
       updated_at ? [url, updated_at].compact.join(url.include?("?") ? "&" : "?") : url
     end
@@ -125,12 +124,12 @@ module Paperclip
     # file is stored in the filesystem the path refers to the path of the file on
     # disk. If the file is stored in S3, the path is the "key" part of the URL,
     # and the :bucket option refers to the S3 bucket.
-    def path style = nil #:nodoc:
+    def path(style = nil) #:nodoc:
       interpolate(@path, style)
     end
 
     # Alias to +url+
-    def to_s style = nil
+    def to_s(style = nil)
       url(style)
     end
 
@@ -247,7 +246,7 @@ module Paperclip
       instance.logger
     end
 
-    def valid_assignment? file #:nodoc:
+    def valid_assignment?(file) #:nodoc:
       return true if file.nil?
       if(file.is_a?(File) || file.is_a?(Tempfile))
         (file.respond_to?(:original_filename) && file.respond_to?(:content_type))
@@ -301,7 +300,7 @@ module Paperclip
       end
     end
 
-    def interpolate pattern, style = default_style #:nodoc:
+    def interpolate(pattern, style = default_style) #:nodoc:
       interpolations = self.class.interpolations.sort{|a,b| a.first.to_s <=> b.first.to_s }
       interpolations.reverse.inject( pattern.dup ) do |result, interpolation|
         tag, blk = interpolation

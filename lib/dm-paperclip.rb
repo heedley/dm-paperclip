@@ -54,7 +54,7 @@ module Paperclip
       }
     end
 
-    def path_for_command command #:nodoc:
+    def path_for_command(command) #:nodoc:
       path = [options[:image_magick_path], command].compact
       File.join(*path)
     end
@@ -139,7 +139,7 @@ module Paperclip
     #   choices are :filesystem and :s3. The default is :filesystem. Make sure you read the
     #   documentation for Paperclip::Storage::Filesystem and Paperclip::Storage::S3
     #   for backend-specific options.
-    def has_attached_file name, options = {}
+    def has_attached_file(name, options = {})
       include InstanceMethods
 
       self.attachment_definitions = {} if self.attachment_definitions.nil?
@@ -187,7 +187,7 @@ module Paperclip
     end
 
     # Adds errors if thumbnail creation fails. The same as specifying :whiny_thumbnails => true.
-    def validates_attachment_thumbnails name, options = {}
+    def validates_attachment_thumbnails(name, options = {})
       self.attachment_definitions[name][:whiny_thumbnails] = true
     end
 
@@ -211,7 +211,7 @@ module Paperclip
   end
 
   module InstanceMethods #:nodoc:
-    def attachment_for name
+    def attachment_for(name)
       @attachments ||= {}
       @attachments[name] ||= Attachment.new(name, self, self.class.attachment_definitions[name])
     end

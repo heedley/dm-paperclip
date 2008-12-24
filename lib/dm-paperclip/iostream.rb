@@ -14,7 +14,7 @@ module IOStream
   # StringIO and Tempfile, then either can have its data copied anywhere else without typing
   # worries or memory overhead worries. Returns a File if a String is passed in as the destination
   # and returns the IO or Tempfile as passed in if one is sent as the destination.
-  def stream_to path_or_file, in_blocks_of = 8192
+  def stream_to(path_or_file, in_blocks_of = 8192)
     dstio = case path_or_file
             when String   then File.new(path_or_file, "wb+")
             when IO       then path_or_file

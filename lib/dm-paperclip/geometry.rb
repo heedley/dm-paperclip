@@ -5,7 +5,7 @@ module Paperclip
     attr_accessor :height, :width, :modifier
 
     # Gives a Geometry representing the given height and width
-    def initialize width = nil, height = nil, modifier = nil
+    def initialize(width = nil, height = nil, modifier = nil)
       height = nil if height == ""
       width  = nil if width  == ""
       @height = (height || width).to_f
@@ -15,14 +15,14 @@ module Paperclip
 
     # Uses ImageMagick to determing the dimensions of a file, passed in as either a
     # File or path.
-    def self.from_file file
+    def self.from_file(file)
       file = file.path if file.respond_to? "path"
       parse(`#{Paperclip.path_for_command('identify')} "#{file}"`) ||
         raise(NotIdentifiedByImageMagickError.new("#{file} is not recognized by the 'identify' command."))
     end
 
     # Parses a "WxH" formatted string, where W is the width and H is the height.
-    def self.parse string
+    def self.parse(string)
       if match = (string && string.match(/\b(\d*)x(\d*)\b([\>\<\#\@\%^!])?/))
         Geometry.new(*match[1,3])
       end
@@ -75,7 +75,7 @@ module Paperclip
     # destination Geometry would be completely filled by the source image, and any 
     # overhanging image would be cropped. Useful for square thumbnail images. The cropping 
     # is weighted at the center of the Geometry.
-    def transformation_to dst, crop = false
+    def transformation_to(dst, crop = false)
 
       if crop
         ratio = Geometry.new( dst.width / self.width, dst.height / self.height )
@@ -90,7 +90,7 @@ module Paperclip
 
     private
 
-    def scaling dst, ratio
+    def scaling(dst, ratio)
       if ratio.horizontal? || ratio.square?
         [ "%dx" % dst.width, ratio.width ]
       else
@@ -98,7 +98,7 @@ module Paperclip
       end
     end
 
-    def cropping dst, ratio, scale
+    def cropping(dst, ratio, scale)
       if ratio.horizontal? || ratio.square?
         "%dx%d+%d+%d" % [ dst.width, dst.height, 0, (self.height * scale - dst.height) / 2 ]
       else
