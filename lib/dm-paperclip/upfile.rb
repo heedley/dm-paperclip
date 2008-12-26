@@ -6,6 +6,8 @@ module Paperclip
   #   user.avatar = File.new("test/test_avatar.jpg")
   module Upfile
 
+    EXTENSIONS = YAML.load_file(File.dirname(__FILE__) + '/mime/mime_types.yml').to_mash unless const_defined?('EXTENSIONS')
+
     # Infer the MIME-type of the file from its extension.
     # Below taken from mimetype-fu by Matt Aimonetti
     def content_type
