@@ -29,6 +29,8 @@
 # See the +has_attached_file+ documentation for more details.
 
 require 'tempfile'
+
+require 'dm-paperclip/mime/extensions_const'
 require 'dm-paperclip/upfile'
 require 'dm-paperclip/iostream'
 require 'dm-paperclip/geometry'

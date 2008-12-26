@@ -1,8 +1,6 @@
 # TODO: user RDoc format for comments
 #       create methods to manage interpolations
 #       allow the use of object instance methods or properties as interpolations
-#       add better mime type checking on *nix systems, absorb mimetype-fu into upfile
-#       Tempfile and File can be used for mime checks
 #       better documentation for use with files that are not images
 #       organize the methods better
 #       remove unneeded methods
@@ -77,18 +75,18 @@ module Paperclip
       return nil if uploaded_file.nil?
 
       #logger.info("[paperclip] Writing attributes for #{name}")
-      newvals = {}
-      if uploaded_file.is_a?(Mash)
+
+      if uploaded_file.is_a?(Mash) # Most common case
         @queued_for_write[:original]          = uploaded_file['tempfile']
         newvals = { :"#{@name}_file_name"    => uploaded_file['filename'].strip.gsub(/[^\w\d\.\-]+/, '_')[/[^\\]+$/],
-                    :"#{@name}_content_type" => uploaded_file['content_type'].strip,
+                    :"#{@name}_content_type" => @queued_for_write[:original].content_type,
                     :"#{@name}_file_size"    => uploaded_file['size'],
                     :"#{@name}_updated_at"   => Time.now }
-      else
+      else # IOStream
         @queued_for_write[:original]          = uploaded_file.to_tempfile
         newvals = { :"#{@name}_file_name"    => uploaded_file.original_filename.strip.gsub(/[^\w\d\.\-]+/, '_')[/[^\\]+$/],
-                    :"#{@name}_content_type" => uploaded_file.content_type.strip,
-                    :"#{@name}_file_size"    => uploaded_file.size,
+                    :"#{@name}_content_type" => uploaded_file.content_type,
+                    :"#{@name}_file_size"    => uploaded_file.size.to_i,
                     :"#{@name}_updated_at"   => Time.now }
       end
 
@@ -96,7 +94,6 @@ module Paperclip
       @dirty = true
 
       # Reset the file size if the original file was reprocessed.
-      #newvals[:"#{@name}_file_size"] = uploaded_file.size.to_i
       if @styles[:original]
         newvals[:"#{@name}_file_size"] = @queued_for_write[:original].size.to_i
       end
@@ -186,8 +183,8 @@ module Paperclip
     # necessary.
     def self.interpolations
       @interpolations ||= {
-        :merb_root => lambda{|attachment,style| Merb.root },
-        :merb_env    => lambda{|attachment,style| Merb.env },
+        :merb_root    => lambda{|attachment,style| Merb.root },
+        :merb_env     => lambda{|attachment,style| Merb.env },
         :class        => lambda do |attachment,style|
                            underscore(attachment.instance.class.name.pluralize)
                          end,
@@ -203,8 +200,8 @@ module Paperclip
                            ("%09d" % attachment.instance.id).scan(/\d{3}/).join("/")
                          end,
         :attachment   => lambda{|attachment,style| attachment.name.to_s.downcase.pluralize },
-        :style        => lambda{|attachment,style| style || attachment.default_style },
-      }
+        :style        => lambda{|attachment,style| style || attachment.default_style }
+      }.sort{|a,b| a.first.to_s <=> b.first.to_s }.reverse
     end
 
     # This method really shouldn't be called that often. It's expected use is in the
@@ -301,8 +298,8 @@ module Paperclip
     end
 
     def interpolate(pattern, style = default_style) #:nodoc:
-      interpolations = self.class.interpolations.sort{|a,b| a.first.to_s <=> b.first.to_s }
-      interpolations.reverse.inject( pattern.dup ) do |result, interpolation|
+      interpolations = self.class.interpolations
+      interpolations.inject( pattern.dup ) do |result, interpolation|
         tag, blk = interpolation
         result.gsub(/:#{tag}/) do |match|
           blk.call( self, style )

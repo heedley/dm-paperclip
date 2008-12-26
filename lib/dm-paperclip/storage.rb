@@ -1,5 +1,3 @@
-# TODO: remove private methods, dm already has these methods for us
-
 module Paperclip
   module Storage
 

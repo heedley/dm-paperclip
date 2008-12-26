@@ -63,7 +63,6 @@ spec = Gem::Specification.new do |s|
   s.files             = FileList["README.rdoc",
                                  "LICENSE",
                                  "Rakefile",
-                                 "init.rb",
                                  "{lib,tasks,test}/**/*"].to_a
   s.require_path      = "lib"
   s.test_files        = FileList["test/**/test_*.rb"].to_a

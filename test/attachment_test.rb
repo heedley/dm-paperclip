@@ -155,7 +155,7 @@ class AttachmentTest < Test::Unit::TestCase
       @not_file.stubs(:nil?).returns(false)
       @not_file.expects(:to_tempfile).returns(self)
       @not_file.expects(:original_filename).returns("filename.png\r\n")
-      @not_file.expects(:content_type).returns("image/png\r\n")
+      @not_file.expects(:content_type).returns("image/png")
       @not_file.expects(:size).returns(10)
       
       @dummy = Dummy.new
@@ -169,10 +169,6 @@ class AttachmentTest < Test::Unit::TestCase
 
     should "strip whitespace from original_filename field" do
       assert_equal "filename.png", @dummy.avatar.original_filename
-    end
-
-    should "strip whitespace from content_type field" do
-      assert_equal "image/png", @dummy.avatar.instance.avatar_content_type
     end
     
   end
