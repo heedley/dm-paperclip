@@ -72,17 +72,22 @@ class AttachmentTest < Test::Unit::TestCase
 
   context "An attachment with similarly named interpolations" do
     setup do
-      rebuild_model :path => ":id.omg/:id-bbq/:idwhat/:id_partition.wtf"
+      rebuild_model :path => ":id.omg/:id-bbq/:other-what/:id_partition.wtf"
       @dummy = Dummy.new
       @dummy.stubs(:id).returns(1024)
+      @dummy.stubs(:other).returns("other_string")
       @file = File.new(File.join(File.dirname(__FILE__),
                                  "fixtures",
                                  "5k.png"))
       @dummy.avatar = @file
     end
 
+    should "make sure the interpolations are setup correctly" do
+      assert_equal 14, @dummy.avatar.interpolations.length
+    end
+
     should "make sure that they are interpolated correctly" do
-      assert_equal "1024.omg/1024-bbq/1024what/000/001/024.wtf", @dummy.avatar.path
+      assert_equal "1024.omg/1024-bbq/other_string-what/000/001/024.wtf", @dummy.avatar.path
     end
   end
 

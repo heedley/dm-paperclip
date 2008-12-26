@@ -1,1 +1,1 @@
-EXTENSIONS = YAML.load_file(File.dirname(__FILE__) + '/mime_types.yml').to_mash
+EXTENSIONS = YAML.load_file(File.dirname(__FILE__) + '/mime_types.yml').to_mash unless const_defined?("EXTENSIONS")

@@ -1,6 +1,5 @@
 # TODO: user RDoc format for comments
 #       create methods to manage interpolations
-#       allow the use of object instance methods or properties as interpolations
 #       better documentation for use with files that are not images
 #       organize the methods better
 #       remove unneeded methods
@@ -181,12 +180,15 @@ module Paperclip
     # the proc named ":name". Each lambda takes the attachment and the current
     # style as arguments. This hash can be added to with your own proc if
     # necessary.
-    def self.interpolations
-      @interpolations ||= {
+    def interpolations
+      return @interpolations unless @interpolations.nil?
+
+      # Standard out of the box interpolations
+      @interpolations = {
         :merb_root    => lambda{|attachment,style| Merb.root },
         :merb_env     => lambda{|attachment,style| Merb.env },
         :class        => lambda do |attachment,style|
-                           underscore(attachment.instance.class.name.pluralize)
+                           self.class.underscore(attachment.instance.class.name.pluralize)
                          end,
         :basename     => lambda do |attachment,style|
                            attachment.original_filename.gsub(File.extname(attachment.original_filename), "")
@@ -195,13 +197,19 @@ module Paperclip
                            ((style = attachment.styles[style]) && style.last) ||
                            File.extname(attachment.original_filename).gsub(/^\.+/, "")
                          end,
-        :id           => lambda{|attachment,style| attachment.instance.id },
         :id_partition => lambda do |attachment, style|
                            ("%09d" % attachment.instance.id).scan(/\d{3}/).join("/")
                          end,
         :attachment   => lambda{|attachment,style| attachment.name.to_s.downcase.pluralize },
         :style        => lambda{|attachment,style| style || attachment.default_style }
-      }.sort{|a,b| a.first.to_s <=> b.first.to_s }.reverse
+      }
+
+      # Dynamic property interpolations
+      self.instance.class.properties.each do |p|
+        @interpolations[:"#{p.field}"] = eval "lambda{|attachment,style| attachment.instance.#{p.field} }"
+      end
+
+      @interpolations.sort{|a,b| a.first.to_s <=> b.first.to_s }.reverse
     end
 
     # This method really shouldn't be called that often. It's expected use is in the
@@ -298,7 +306,6 @@ module Paperclip
     end
 
     def interpolate(pattern, style = default_style) #:nodoc:
-      interpolations = self.class.interpolations
       interpolations.inject( pattern.dup ) do |result, interpolation|
         tag, blk = interpolation
         result.gsub(/:#{tag}/) do |match|
