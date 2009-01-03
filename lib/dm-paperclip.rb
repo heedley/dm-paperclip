@@ -145,13 +145,6 @@ module Paperclip
 
       self.attachment_definitions = {} if self.attachment_definitions.nil?
       self.attachment_definitions[name] = {:validations => []}.merge(options)
-      
-      property_options = options.delete_if { |k,v| ![ :public, :protected, :private, :accessor, :reader, :writer ].include?(key) }
-
-      property "#{name}_file_name".to_sym, String, property_options
-      property "#{name}_content_type".to_sym, String, property_options
-      property "#{name}_file_size".to_sym, Integer, property_options
-      property "#{name}_updated_at".to_sym, DateTime, property_options
 
       after :save, :save_attached_files
       before :destroy, :destroy_attached_files
